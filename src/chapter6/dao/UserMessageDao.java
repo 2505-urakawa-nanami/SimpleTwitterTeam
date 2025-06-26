@@ -18,6 +18,7 @@ public class UserMessageDao {
 
 	public List<UserMessage> select(Connection connection, Integer userId, String start, String end, String searchWord, String likeSearch, int num) {
 
+
         PreparedStatement ps = null;
         try {
             StringBuilder sql = new StringBuilder();
@@ -38,55 +39,56 @@ public class UserMessageDao {
 
             if (!StringUtils.isBlank(searchWord)) {
     			sql.append(" AND messages.text = ? ");
-    		}
-
-            sql.append("ORDER BY created_date DESC limit " + num);
-            ps = connection.prepareStatement(sql.toString());
-
-            ps.setString(1, start);
-            ps.setString(2, end);
-
-            if(userId != null) {
-            	ps.setInt(3, userId);
-
-            	if (!StringUtils.isBlank(searchWord)) {
-    				ps.setString(4, searchWord);
-    			}
     		} else {
-    			if (!StringUtils.isBlank(searchWord)) {
-    				ps.setString(3, searchWord);
-    			}
-            }
+				sql.append(" AND messages.text like ? ");
+			}
 
-            ResultSet rs = ps.executeQuery();
+			sql.append("ORDER BY created_date DESC limit " + num);
+			ps = connection.prepareStatement(sql.toString());
+			ps.setString(1, start);
+			ps.setString(2, end);
 
-            List<UserMessage> messages = toUserMessages(rs);
-            return messages;
-        } catch (SQLException e) {
-            throw new SQLRuntimeException(e);
-        } finally {
-            close(ps);
-        }
-    }
+			 if(userId != null) {
+	            	ps.setInt(3, userId);
 
-    private List<UserMessage> toUserMessages(ResultSet rs) throws SQLException {
+	            	if (!StringUtils.isBlank(searchWord)) {
+	    				ps.setString(4, searchWord);
+	    			}
+	    		} else {
+	    			if (!StringUtils.isBlank(searchWord)) {
+	    				ps.setString(3, searchWord);
+	    			}
+	            }
 
-        List<UserMessage> messages = new ArrayList<UserMessage>();
-        try {
-            while (rs.next()) {
-                UserMessage message = new UserMessage();
-                message.setId(rs.getInt("id"));
-                message.setText(rs.getString("text"));
-                message.setUserId(rs.getInt("user_id"));
-                message.setAccount(rs.getString("account"));
-                message.setName(rs.getString("name"));
-                message.setCreatedDate(rs.getTimestamp("created_date"));
+			ResultSet rs = ps.executeQuery();
 
-                messages.add(message);
-            }
-            return messages;
-        } finally {
-            close(rs);
-        }
-    }
+			List<UserMessage> messages = toUserMessages(rs);
+			return messages;
+		} catch (SQLException e) {
+			throw new SQLRuntimeException(e);
+		} finally {
+			close(ps);
+		}
+	}
+
+	private List<UserMessage> toUserMessages(ResultSet rs) throws SQLException {
+
+		List<UserMessage> messages = new ArrayList<UserMessage>();
+		try {
+			while (rs.next()) {
+				UserMessage message = new UserMessage();
+				message.setId(rs.getInt("id"));
+				message.setText(rs.getString("text"));
+				message.setUserId(rs.getInt("user_id"));
+				message.setAccount(rs.getString("account"));
+				message.setName(rs.getString("name"));
+				message.setCreatedDate(rs.getTimestamp("created_date"));
+
+				messages.add(message);
+			}
+			return messages;
+		} finally {
+			close(rs);
+		}
+	}
 }

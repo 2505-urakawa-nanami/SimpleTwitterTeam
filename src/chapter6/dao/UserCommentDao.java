@@ -38,11 +38,10 @@ public class UserCommentDao {
 			List<UserComment> comments = toUserComments(rs);
 			return comments;
 		} catch (SQLException e) {
-            throw new SQLRuntimeException(e);
-        } finally {
-            close(ps);
-        }
-
+			throw new SQLRuntimeException(e);
+		} finally {
+			close(ps);
+		}
 	}
 
 	private List<UserComment> toUserComments(ResultSet rs) throws SQLException {
