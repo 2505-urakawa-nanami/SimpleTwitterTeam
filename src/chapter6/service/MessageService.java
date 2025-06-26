@@ -17,7 +17,7 @@ import chapter6.dao.UserMessageDao;
 
 public class MessageService {
 
-    public void insert(Message message) {
+	public void insert(Message message) {
 
         Connection connection = null;
         try {
@@ -75,61 +75,63 @@ public class MessageService {
         }
 	}
 
-    /**つぶやきを削除します
-     * @param id つぶやきID
-     */
-    public void delete(Integer id) {
 
-        Connection connection = null;
-        try {
-            connection = getConnection();
-            new MessageDao().delete(connection, id);
-            commit(connection);
-        } catch (RuntimeException e) {
-            rollback(connection);
-            throw e;
-        } catch (Error e) {
-            rollback(connection);
-            throw e;
-        } finally {
-            close(connection);
-        }
-    }
 
-    public void update(Message record) {
+	/**つぶやきを削除します
+	 * @param id つぶやきID
+	 */
+	public void delete(Integer id) {
 
-        Connection connection = null;
-        try {
-            connection = getConnection();
-            new MessageDao().update(connection, record);
-            commit(connection);
-        } catch (RuntimeException e) {
-            rollback(connection);
-            throw e;
-        } catch (Error e) {
-            rollback(connection);
-            throw e;
-        } finally {
-            close(connection);
-        }
-    }
+		Connection connection = null;
+		try {
+			connection = getConnection();
+			new MessageDao().delete(connection, id);
+			commit(connection);
+		} catch (RuntimeException e) {
+			rollback(connection);
+			throw e;
+		} catch (Error e) {
+			rollback(connection);
+			throw e;
+		} finally {
+			close(connection);
+		}
+	}
 
-    public Message select(Integer messageId) {
-    	Connection connection = null;
-    	try {
-    		connection = getConnection();
-    		Message message = new MessageDao().select(connection, messageId);
-            commit(connection);
+	public void update(Message record) {
 
-            return message;
-        } catch (RuntimeException e) {
-            rollback(connection);
-            throw e;
-        } catch (Error e) {
-            rollback(connection);
-            throw e;
-        } finally {
-            close(connection);
-    	}
-    }
+		Connection connection = null;
+		try {
+			connection = getConnection();
+			new MessageDao().update(connection, record);
+			commit(connection);
+		} catch (RuntimeException e) {
+			rollback(connection);
+			throw e;
+		} catch (Error e) {
+			rollback(connection);
+			throw e;
+		} finally {
+			close(connection);
+		}
+	}
+
+	public Message select(Integer messageId) {
+		Connection connection = null;
+		try {
+			connection = getConnection();
+			Message message = new MessageDao().select(connection, messageId);
+			commit(connection);
+
+			return message;
+		} catch (RuntimeException e) {
+			rollback(connection);
+			throw e;
+		} catch (Error e) {
+			rollback(connection);
+			throw e;
+		} finally {
+			close(connection);
+		}
+	}
 }
